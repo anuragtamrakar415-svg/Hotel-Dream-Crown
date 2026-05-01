@@ -150,6 +150,7 @@
                                 <th>Total (₹)</th>
                                 <th>Advance (₹)</th>
                                 <th>Remaining (₹)</th>
+                                <th>UTR</th>
                                 <th>Payment Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -168,6 +169,7 @@
                                 <td class="price">₹{{ "{:,}".format(b.amount or 0) }}</td>
                                 <td class="price">₹{{ "{:,}".format(b.advance_paid or 0) }}</td>
                                 <td class="price">₹{{ "{:,}".format((b.amount or 0) - (b.advance_paid or 0)) }}</td>
+                                <td>{{ b.utr or 'N/A' }}</td>
                                 <td>
                                     {% if b.payment_status and 'pending' in b.payment_status|lower %}
                                         <span class="status-pending"><i class="fas fa-clock"></i> Pending</span>
