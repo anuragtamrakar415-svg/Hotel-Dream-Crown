@@ -727,4 +727,4 @@ if __name__ == "__main__":
         print("✅ Database initialized!")
         print("📌 Admin Login: username='admin', password='1234'")
 
-    app.run(debug=True)
+    app.run(debug=False)
