@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Bookings | Hotel DreamCrown</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_bookings.css') }}">
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 9644603534</span>
+                    <span><i class="fas fa-envelope"></i> vishalchandravanshi806@gmail.com</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Bhopal, Madhya Pradesh, India</span>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-tripadvisor"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Dream<span>Crown</span></h1>
+                    <span class="admin-badge">Admin Panel</span>
+                </div>
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a href="/admin">Dashboard</a></li>
+                        <li><a href="/admin_bookings" class="active">Bookings</a></li>
+                        <li><a href="/admin_rooms">Rooms</a></li>
+                        <li><a href="/admin/users">Users</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </nav>
+                <div class="admin-info">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- BOOKINGS PAGE HERO -->
+    <section class="page-hero">
+        <div class="container">
+            <div class="page-hero-content">
+                <span class="hero-subtitle">Manage Bookings</span>
+                <h1>All Hotel <span>Bookings</span></h1>
+                <p>View, manage, and process all guest booking requests from one place.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOOKINGS SECTION -->
+    <section class="bookings-section">
+        <div class="container">
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label><i class="fas fa-filter"></i> Status Filter</label>
+                    <select id="statusFilter" class="filter-select">
+                        <option value="all">All Bookings</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-calendar"></i> Date Range</label>
+                    <input type="date" id="startDate" class="filter-date" placeholder="Start Date">
+                    <span>to</span>
+                    <input type="date" id="endDate" class="filter-date" placeholder="End Date">
+                </div>
+                <div class="filter-group">
+                    <label><i class="fas fa-search"></i> Search</label>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search by name, email, room...">
+                    </div>
+                </div>
+                <button class="btn-reset" onclick="resetFilters()">
+                    <i class="fas fa-undo-alt"></i> Reset
+                </button>
+            </div>
+
+            <!-- Stats Summary -->
+            <div class="stats-summary">
+                <div class="summary-card">
+                    <div class="summary-icon pending-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="summary-info">
+                        <h4>Pending</h4>
+                        <p class="summary-number" id="pendingCount">0</p>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon confirmed-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="summary-info">
+                        <h4>Confirmed</h4>
+                        <p class="summary-number" id="confirmedCount">0</p>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon rejected-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="summary-info">
+                        <h4>Rejected</h4>
+                        <p class="summary-number" id="rejectedCount">0</p>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon total-icon">
+                        <i class="fas fa-bed"></i>
+                    </div>
+                    <div class="summary-info">
+                        <h4>Total Bookings</h4>
+                        <p class="summary-number" id="totalCount">{{ bookings|length }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookings Table -->
+            <div class="table-wrapper">
+                <div class="table-header">
+                    <h2><i class="fas fa-calendar-check"></i> All Bookings</h2>
+                    <div class="table-actions">
+                        <button class="btn-export" onclick="exportToExcel()">
+                            <i class="fas fa-file-excel"></i> Export Excel
+                        </button>
+                        <button class="btn-print" onclick="window.print()">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="bookings-table" id="bookingsTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll()"></th>
+                                <th>ID</th>
+                                <th>Guest Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Check-in Date</th>
+                                <th>Check-out Date</th>
+                                <th>Guests</th>
+                                <th>Room Type</th>
+                                <th>Total (₹)</th>
+                                <th>Advance (₹)</th>
+                                <th>Remaining (₹)</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            {% for b in bookings %}
+                            <tr data-status="{{ b.payment_status|lower }}" data-name="{{ b.name }}" data-email="{{ b.email }}">
+                                <td><input type="checkbox" class="row-checkbox" value="{{ b.id }}"></td>
+                                <td>#{{ b.id }}</td>
+                                <td><strong>{{ b.name }}</strong></td>
+                                <td>{{ b.email }}</td>
+                                <td>{{ b.phone or 'N/A' }}</td>
+                                <td><span class="date-badge">{{ b.date }}</span></td>
+                                <td><span class="date-badge">{{ b.checkout_date or 'N/A' }}</span></td>
+                                <td><span class="guest-badge"><i class="fas fa-user"></i> {{ b.guests }}</span></td>
+                                <td><span class="room-badge">{{ b.room_type or 'Standard' }}</span></td>
+                                <td class="price">₹{{ "{:,}".format(b.amount or 0) }}</td>
+                                <td class="price">₹{{ "{:,}".format(b.advance_paid or 0) }}</td>
+                                <td class="price">₹{{ "{:,}".format((b.amount or 0) - (b.advance_paid or 0)) }}</td>
+                                <td>
+                                    {% if b.payment_status and 'pending' in b.payment_status|lower %}
+                                        <span class="status-pending"><i class="fas fa-clock"></i> Pending</span>
+                                    {% elif b.payment_status|lower == "confirmed" %}
+                                        <span class="status-confirmed"><i class="fas fa-check-circle"></i> Confirmed</span>
+                                    {% elif b.payment_status|lower == "rejected" %}
+                                        <span class="status-rejected"><i class="fas fa-times-circle"></i> Rejected</span>
+                                    {% else %}
+                                        <span class="status-other">{{ b.payment_status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="actions">
+                                    <button class="btn-view" onclick="viewBooking({{ b.id }})" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    {% if b.payment_status and 'pending' in b.payment_status|lower %}
+                                        <button class="btn-verify" onclick="verifyBooking({{ b.id }})" title="Verify Booking">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button class="btn-reject" onclick="rejectBooking({{ b.id }})" title="Reject Booking">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    {% endif %}
+                                    <button class="btn-delete" onclick="deleteBooking({{ b.id }})" title="Delete Booking">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            
+                            {% if bookings|length == 0 %}
+                            <tr class="empty-row">
+                                <td colspan="15">
+                                    <div class="empty-state">
+                                        <i class="fas fa-calendar-times"></i>
+                                        <p>No bookings found</p>
+                                        <span>New bookings will appear here</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Bulk Actions -->
+                <div class="bulk-actions" id="bulkActions" style="display: none;">
+                    <span class="selected-count">Selected <span id="selectedCount">0</span> bookings</span>
+                    <div class="bulk-buttons">
+                        <button class="bulk-verify" onclick="bulkVerify()">
+                            <i class="fas fa-check-circle"></i> Bulk Verify
+                        </button>
+                        <button class="bulk-delete" onclick="bulkDelete()">
+                            <i class="fas fa-trash-alt"></i> Bulk Delete
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-section">
+                    <div class="pagination-info">
+                        Showing <span id="startCount">1</span> to <span id="endCount">10</span> of <span id="totalEntries">{{ bookings|length }}</span> entries
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="page-btn" onclick="prevPage()" id="prevBtn">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <span class="page-numbers" id="pageNumbers"></span>
+                        <button class="page-btn" onclick="nextPage()" id="nextBtn">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VIEW BOOKING MODAL -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-receipt"></i> Booking Details</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Dream<span>Crown</span></h3>
+                    <p>Hotel Management System - Admin Bookings</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-tripadvisor"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Website Home</a></li>
+                        <li><a href="/admin">Dashboard</a></li>
+                        <li><a href="/admin/bookings">Bookings</a></li>
+                        <li><a href="/admin/rooms">Rooms</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Reports</h4>
+                    <ul>
+                        <li><a href="#" onclick="exportToExcel()">Export Bookings</a></li>
+                        <li><a href="#" onclick="window.print()">Print Report</a></li>
+                        <li><a href="#">Revenue Report</a></li>
+                        <li><a href="#">Occupancy Report</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>System Info</h4>
+                    <ul class="footer-contact">
+                        <li><i class="fas fa-clock"></i> Last Login: Today</li>
+                        <li><i class="fas fa-database"></i> Total Records: {{ bookings|length }}</li>
+                        <li><i class="fas fa-server"></i> Version: 2.0.0</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Hotel DreamCrown Admin Panel. All rights reserved. | Secure Management System</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables
+        let currentPage = 1;
+        const rowsPerPage = 10;
+        let allBookings = {{ bookings|tojson }};
+        let filteredBookings = [...allBookings];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            setupEventListeners();
+            renderTable();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+            document.getElementById('startDate').addEventListener('change', applyFilters);
+            document.getElementById('endDate').addEventListener('change', applyFilters);
+            document.getElementById('searchInput').addEventListener('keyup', applyFilters);
+            document.getElementById('selectAll').addEventListener('change', toggleSelectAll);
+        }
+
+        function applyFilters() {
+            const status = document.getElementById('statusFilter').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            filteredBookings = allBookings.filter(booking => {
+                // Status filter
+                if (status !== 'all') {
+                    const bookingStatus = (booking.payment_status || '').toLowerCase();
+                    if (!bookingStatus.includes(status.toLowerCase())) return false;
+                }
+
+                // Date range filter
+                if (startDate && booking.date < startDate) return false;
+                if (endDate && booking.date > endDate) return false;
+
+                // Search filter
+                if (searchTerm) {
+                    const nameMatch = (booking.name || '').toLowerCase().includes(searchTerm);
+                    const emailMatch = (booking.email || '').toLowerCase().includes(searchTerm);
+                    const roomMatch = (booking.room_type || '').toLowerCase().includes(searchTerm);
+                    if (!nameMatch && !emailMatch && !roomMatch) return false;
+                }
+
+                return true;
+            });
+
+            currentPage = 1;
+            updateStats();
+            renderTable();
+        }
+
+        function resetFilters() {
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('searchInput').value = '';
+            applyFilters();
+        }
+
+        function updateStats() {
+            let pending = 0, confirmed = 0, rejected = 0;
+            filteredBookings.forEach(booking => {
+                const status = (booking.payment_status || '').toLowerCase();
+                if (status.includes('pending')) pending++;
+                else if (status === 'confirmed') confirmed++;
+                else if (status === 'rejected') rejected++;
+            });
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('confirmedCount').textContent = confirmed;
+            document.getElementById('rejectedCount').textContent = rejected;
+            document.getElementById('totalCount').textContent = filteredBookings.length;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const pageBookings = filteredBookings.slice(start, end);
+
+            if (pageBookings.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="15"><div class="empty-state"><i class="fas fa-calendar-times"></i><p>No bookings found</p><span>Try adjusting your filters</span></div></td></tr>`;
+                document.getElementById('startCount').textContent = 0;
+                document.getElementById('endCount').textContent = 0;
+                document.getElementById('totalEntries').textContent = filteredBookings.length;
+                return;
+            }
+
+            let html = '';
+            pageBookings.forEach(booking => {
+                const status = (booking.payment_status || '').toLowerCase();
+                let statusHtml = '';
+                if (status.includes('pending')) {
+                    statusHtml = '<span class="status-pending"><i class="fas fa-clock"></i> Pending</span>';
+                } else if (status === 'confirmed') {
+                    statusHtml = '<span class="status-confirmed"><i class="fas fa-check-circle"></i> Confirmed</span>';
+                } else if (status === 'rejected') {
+                    statusHtml = '<span class="status-rejected"><i class="fas fa-times-circle"></i> Rejected</span>';
+                } else {
+                    statusHtml = `<span class="status-other">${booking.payment_status || 'N/A'}</span>`;
+                }
+
+                let actionsHtml = `
+                    <button class="btn-view" onclick="viewBooking(${booking.id})" title="View Details">
+                        <i class="fas fa-eye"></i>
+                    </button>`;
+                
+                if (status.includes('pending')) {
+                    actionsHtml += `
+                        <button class="btn-verify" onclick="verifyBooking(${booking.id})" title="Verify Booking">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="btn-reject" onclick="rejectBooking(${booking.id})" title="Reject Booking">
+                            <i class="fas fa-times"></i>
+                        </button>`;
+                }
+                
+                actionsHtml += `
+                    <button class="btn-delete" onclick="deleteBooking(${booking.id})" title="Delete Booking">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>`;
+
+                html += `
+                    <tr data-status="${status}">
+                        <td><input type="checkbox" class="row-checkbox" value="${booking.id}"></td>
+                        <td>#${booking.id}</td>
+                        <td><strong>${booking.name || 'N/A'}</strong></td>
+                        <td>${booking.email || 'N/A'}</td>
+                        <td>${booking.phone || 'N/A'}</td>
+                        <td><span class="date-badge">${booking.date || 'N/A'}</span></td>
+                        <td><span class="date-badge">${booking.checkout_date || 'N/A'}</span></td>
+                        <td><span class="guest-badge"><i class="fas fa-user"></i> ${booking.guests || 1}</span></td>
+                        <td><span class="room-badge">${booking.room_type || 'Standard'}</span></td>
+                        <td class="price">₹${formatNumber(booking.amount || 0)}</td>
+                        <td class="price">₹${formatNumber(booking.advance_paid || 0)}</td>
+                        <td class="price">₹${formatNumber((booking.amount || 0) - (booking.advance_paid || 0))}</td>
+                        <td>${statusHtml}</td>
+                        <td class="actions">${actionsHtml}</td>
+                    </tr>`;
+            });
+
+            tbody.innerHTML = html;
+            document.getElementById('startCount').textContent = start + 1;
+            document.getElementById('endCount').textContent = Math.min(end, filteredBookings.length);
+            document.getElementById('totalEntries').textContent = filteredBookings.length;
+            updatePaginationButtons();
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function updatePaginationButtons() {
+            const totalPages = Math.ceil(filteredBookings.length / rowsPerPage);
+            const pageNumbersDiv = document.getElementById('pageNumbers');
+            pageNumbersDiv.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = `page-number ${i === currentPage ? 'active' : ''}`;
+                btn.onclick = () => {
+                    currentPage = i;
+                    renderTable();
+                };
+                pageNumbersDiv.appendChild(btn);
+            }
+
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredBookings.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            checkboxes.forEach(cb => cb.checked = selectAll.checked);
+            updateBulkActions();
+        }
+
+        function updateBulkActions() {
+            const selected = document.querySelectorAll('.row-checkbox:checked');
+            const count = selected.length;
+            document.getElementById('selectedCount').textContent = count;
+            document.getElementById('bulkActions').style.display = count > 0 ? 'flex' : 'none';
+        }
+
+        function viewBooking(id) {
+            const booking = allBookings.find(b => b.id === id);
+            if (booking) {
+                const modalBody = document.getElementById('modalBody');
+                modalBody.innerHTML = `
+                    <div class="booking-detail">
+                        <div class="detail-row"><strong>Booking ID:</strong> #${booking.id}</div>
+                        <div class="detail-row"><strong>Guest Name:</strong> ${booking.name}</div>
+                        <div class="detail-row"><strong>Email:</strong> ${booking.email}</div>
+                        <div class="detail-row"><strong>Phone:</strong> ${booking.phone || 'N/A'}</div>
+                        <div class="detail-row"><strong>Check-in Date:</strong> ${booking.date}</div>
+                        <div class="detail-row"><strong>Check-out Date:</strong> ${booking.checkout_date || 'N/A'}</div>
+                        <div class="detail-row"><strong>Number of Guests:</strong> ${booking.guests}</div>
+                        <div class="detail-row"><strong>Room Type:</strong> ${booking.room_type || 'Standard'}</div>
+                        <div class="detail-row"><strong>Total Amount:</strong> ₹${formatNumber(booking.amount || 0)}</div>
+                        <div class="detail-row"><strong>Advance Paid:</strong> ₹${formatNumber(booking.advance_paid || 0)}</div>
+                        <div class="detail-row"><strong>Remaining:</strong> ₹${formatNumber((booking.amount || 0) - (booking.advance_paid || 0))}</div>
+                        <div class="detail-row"><strong>Payment Status:</strong> ${booking.payment_status || 'N/A'}</div>
+                        <div class="detail-row"><strong>Booking Date:</strong> ${booking.booking_date || 'N/A'}</div>
+                    </div>
+                `;
+                document.getElementById('viewModal').style.display = 'flex';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('viewModal').style.display = 'none';
+        }
+
+        function verifyBooking(id) {
+            if (confirm('Are you sure you want to verify this booking?')) {
+                window.location.href = `/verify/${id}`;
+            }
+        }
+
+        function rejectBooking(id) {
+            if (confirm('Are you sure you want to reject this booking?')) {
+                window.location.href = `/reject/${id}`;
+            }
+        }
+
+        function deleteBooking(id) {
+            if (confirm('Are you sure you want to delete this booking? This action cannot be undone.')) {
+                window.location.href = `/delete/${id}`;
+            }
+        }
+
+        function bulkVerify() {
+            const selected = document.querySelectorAll('.row-checkbox:checked');
+            if (selected.length === 0) {
+                alert('Please select at least one booking');
+                return;
+            }
+            if (confirm(`Are you sure you want to verify ${selected.length} booking(s)?`)) {
+                const ids = Array.from(selected).map(cb => cb.value);
+                // Implement bulk verify API call here
+                alert('Bulk verify feature - Implement API call');
+            }
+        }
+
+        function bulkDelete() {
+            const selected = document.querySelectorAll('.row-checkbox:checked');
+            if (selected.length === 0) {
+                alert('Please select at least one booking');
+                return;
+            }
+            if (confirm(`Are you sure you want to delete ${selected.length} booking(s)? This cannot be undone.`)) {
+                const ids = Array.from(selected).map(cb => cb.value);
+                // Implement bulk delete API call here
+                alert('Bulk delete feature - Implement API call');
+            }
+        }
+
+        function exportToExcel() {
+            const table = document.getElementById('bookingsTable');
+            const rows = table.querySelectorAll('tr');
+            let csv = [];
+            
+            rows.forEach(row => {
+                const rowData = [];
+                const cells = row.querySelectorAll('th, td');
+                cells.forEach((cell, index) => {
+                    if (index === 0 && cell.tagName === 'TD') return; // Skip checkbox column
+                    let text = cell.innerText;
+                    rowData.push(text.replace(/,/g, ' '));
+                });
+                if (rowData.length > 0) {
+                    csv.push(rowData.join(','));
+                }
+            });
+            
+            const blob = new Blob([csv.join('\n')], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'hotel_bookings.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('viewModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

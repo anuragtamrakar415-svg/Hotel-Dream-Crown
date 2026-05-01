@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Room | Hotel DreamCrown</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/book.css') }}">
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 9644603534</span>
+                    <span><i class="fas fa-envelope"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2a5c4359424b4649424b444e584b5c4b44594243121a1c6a4d474b434604494547">[email&#160;protected]</a></span>
+                    <span><i class="fas fa-map-marker-alt"></i> Bhopal, Madhya Pradesh, India</span>
+                </div>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/1FANdkGqs3/?mibextid=wwXIfr"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/dreamcrown_katarahills?igsh=MWVwb3Uza2RpNmhmMQ%3D%3D&utm_source=qr"><i class="fab fa-instagram"></i></a>        
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Dream<span>Crown</span></h1>
+                </div>
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/rooms">Rooms</a></li>
+                        <li><a href="/dining">Dining</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </nav>
+                <a href="/rooms" class="btn-book">Book Now <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- PAGE HERO SECTION -->
+    <section class="page-hero">
+        <div class="container">
+            <div class="page-hero-content">
+                <span class="hero-subtitle">Secure Your Stay</span>
+                <h1>Book Your <span>Dream Room</span></h1>
+                <p>Experience luxury and comfort at Hotel DreamCrown. Fill out the form below to reserve your perfect getaway.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOOKING FORM SECTION -->
+    <section class="booking-section">
+        <div class="container">
+            <div class="booking-wrapper">
+                <!-- Booking Form Card -->
+                <div class="booking-form-card">
+                    <div class="form-header">
+                        <div class="form-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h2>Room Reservation</h2>
+                        <p>Please fill in your details to confirm your booking</p>
+                    </div>
+                    {% if error %}
+<div style="color:red; margin-bottom:15px;">
+{{ error }}
+</div>
+{% endif %}
+                    <form method="POST" action="" class="booking-form">
+                        <input type="hidden" name="room_id" value="{{ room_id }}">
+                        <div class="form-group">
+                            <label for="name">
+                                <i class="fas fa-user"></i>
+                                Full Name
+                            </label>
+                            <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">
+                                <i class="fas fa-envelope"></i>
+                                Email Address
+                            </label>
+                            <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+                        </div>
+                         <div class="form-group">
+                            <label for="phone">
+                                <i class="fas fa-phone"></i>
+                                Phone Number
+                            </label>
+                            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="date">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Check-in Date
+                                </label>
+                                <input type="date" id="date" name="date" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="checkout">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Check-out Date
+                                </label>
+                                <input type="date" id="checkout" name="checkout_date" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="guests">
+                                    <i class="fas fa-users"></i>
+                                    Number of Guests
+                                </label>
+                                <input type="number" id="guests" name="guests" placeholder="Number of guests" min="1" max="10" required>
+                                                        <div class="form-group">
+<label for="payment_option">
+<i class="fas fa-credit-card"></i>
+Payment Option
+</label>
+
+<select id="payment_option" name="payment_option" required>
+<option value="">Select Payment Option</option>
+<option value="advance">Pay 25% Advance(Non Refundable)</option>
+<option value="full">Pay Full Amount</option>
+</select>
+</div>
+                            </div>
+                                 
+                            <div class="form-group">
+                                <label for="room">
+                                    <i class="fas fa-bed"></i>
+                                    Room Type
+                                </label>
+                                <select id="room" name="room" required>
+                                    <option value="">Select Room Type</option>
+                                    <option value="ac-deluxe">AC Rooms - ₹899/night</option>
+                                    <option value="non-ac-family">Non-AC Rooms - ₹599/night</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="special">
+                                <i class="fas fa-comment"></i>
+                                Special Requests
+                            </label>
+                            <textarea id="special" name="special" rows="4" placeholder="Any special requests or preferences? (Dietary, room preferences, etc.)"></textarea>
+                        </div>
+                        
+<div class="booking-summary">
+<h4>Booking Summary</h4>
+
+<div class="summary-details">
+
+<div class="summary-row">
+<span>Room Price:</span>
+<span id="roomPrice">Select a room</span>
+</div>
+
+<div class="summary-row">
+<span>Nights:</span>
+<span id="nights">1</span>
+</div>
+
+<div class="summary-row">
+<span>Total Price:</span>
+<span id="totalAmount">₹0</span>
+</div>
+
+<div class="summary-row">
+<span>Payment Now:</span>
+<span id="payNow">₹0</span>
+</div>
+
+<div class="summary-row total">
+<span>Remaining at Hotel:</span>
+<span id="payHotel">₹0</span>
+</div>
+
+</div>
+</div>
+
+                        <!-- Hidden amount - JS fills this -->
+                        <input type="hidden" id="amount" name="amount" value="0">
+
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-check-circle"></i>
+                            Confirm Booking
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Booking Info Sidebar -->
+                <div class="booking-info-sidebar">
+                    <div class="info-card">
+                        <h4><i class="fas fa-info-circle"></i> Booking Information</h4>
+                        <ul>
+                            <li><i class="fas fa-check"></i> Free cancellation up to 24 hours before check-in</li>
+                            <li><i class="fas fa-check"></i> Best price guaranteed</li>
+                            <li><i class="fas fa-check"></i> No booking fees</li>
+                            <li><i class="fas fa-check"></i> Instant confirmation</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h4><i class="fas fa-clock"></i> Check-in / Check-out</h4>
+                        <p><strong>Check-in:</strong> 2:00 PM onwards</p>
+                        <p><strong>Check-out:</strong> 11:00 AM</p>
+                        <p><strong>Early check-in:</strong> Subject to availability</p>
+                        <p><strong>Late check-out:</strong> Additional charges apply</p>
+                    </div>
+
+                    <div class="info-card">
+                        <h4><i class="fas fa-credit-card"></i> Payment Methods</h4>
+                        <div class="payment-icons">
+                            <i class="fab fa-cc-visa"></i>
+                            <i class="fab fa-cc-mastercard"></i>
+                            <i class="fab fa-cc-amex"></i>
+                            <i class="fab fa-cc-paypal"></i>
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                        <p class="payment-note">Secure payment powered by Razorpay</p>
+                    </div>
+
+                    <div class="info-card contact-card">
+                        <h4><i class="fas fa-headset"></i> Need Help?</h4>
+                        <p>Call us 24/7 for assistance</p>
+                        <p class="contact-number"><i class="fas fa-phone-alt"></i> +91 98765 43210</p>
+                        <p>Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dfadbaacbaada9beabb6b0b1ac9fbbadbabeb2bcadb0a8b1f1bcb0b2">[email&#160;protected]</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Dream<span>Crown</span></h3>
+                    <p>Your comfort is our happiness. Luxury redefined with aqua and lemon elegance.</p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/share/1FANdkGqs3/?mibextid=wwXIfr"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/dreamcrown_katarahills?igsh=MWVwb3Uza2RpNmhmMQ%3D%3D&utm_source=qr"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/rooms">Rooms & Suites</a></li>
+                        <li><a href="/dining">Dining</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cancellation Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Info</h4>
+                    <ul class="footer-contact">
+                        <li><i class="fas fa-map-marker-alt"></i> Building no. 223, SwarnKunj Colony Katarahills, Bhopal, Madhya Pradesh 462043</li>
+                        <li><i class="fas fa-phone"></i> +91 9644603534</li>
+                        <li><i class="fas fa-envelope"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bccad5cfd4ddd0dfd4ddd2d8ceddcaddd2cfd4d5848c8afcdbd1ddd5d092dfd3d1">[email&#160;protected]</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Hotel DreamCrown. All rights reserved. | Designed with <i class="fas fa-heart"></i> for luxury</p>
+            </div>
+        </div>
+    </footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+
+    <script>
+        const roomPrices = { 'ac-deluxe': 899, 'non-ac-family': 599 };
+        const checkinInput   = document.getElementById('date');
+        const checkoutInput  = document.getElementById('checkout');
+        const roomSelect     = document.getElementById('room');
+        const roomPriceSpan  = document.getElementById('roomPrice');
+        const nightsSpan     = document.getElementById('nights');
+        const totalSpan      = document.getElementById('totalAmount');
+        const paymentOption  = document.getElementById('payment_option');
+        const payNowSpan     = document.getElementById('payNow');
+        const payHotelSpan   = document.getElementById('payHotel');
+        const amountInput    = document.getElementById('amount');
+
+        function calculateNights() {
+            if (checkinInput && checkinInput.value && checkoutInput && checkoutInput.value) {
+                const ci  = new Date(checkinInput.value);
+                const co  = new Date(checkoutInput.value);
+                const diff = Math.ceil((co - ci) / (1000 * 60 * 60 * 24));
+                return diff > 0 ? diff : 0;
+            }
+            return 0;
+        }
+
+        function updateSummary() {
+            const roomValue = roomSelect ? roomSelect.value : '';
+            const price     = roomPrices[roomValue] || 0;
+            const nights    = calculateNights();
+            const total     = price * nights;
+
+            if (roomPriceSpan) roomPriceSpan.textContent = price > 0 ? 'Rs.' + price + '/night' : 'Select a room';
+            if (nightsSpan)    nightsSpan.textContent    = nights > 0 ? nights : '-';
+            if (totalSpan)     totalSpan.textContent     = total > 0  ? 'Rs.' + total : 'Rs.0';
+
+            const option = paymentOption ? paymentOption.value : '';
+
+            if (total > 0 && option === 'advance') {
+                const advance   = Math.round(total * 0.25);
+                const remaining = total - advance;
+                if (payNowSpan)   payNowSpan.textContent   = 'Rs.' + advance;
+                if (payHotelSpan) payHotelSpan.textContent = 'Rs.' + remaining;
+                if (amountInput)  amountInput.value        = advance;
+            } else if (total > 0 && option === 'full') {
+                if (payNowSpan)   payNowSpan.textContent   = 'Rs.' + total;
+                if (payHotelSpan) payHotelSpan.textContent = 'Rs.0';
+                if (amountInput)  amountInput.value        = total;
+            } else {
+                if (payNowSpan)   payNowSpan.textContent   = 'Rs.0';
+                if (payHotelSpan) payHotelSpan.textContent = 'Rs.0';
+                if (amountInput)  amountInput.value        = total || 0;
+            }
+        }
+
+        // Min date = today
+        const todayStr = new Date().toISOString().split('T')[0];
+        if (checkinInput)  checkinInput.min  = todayStr;
+        if (checkoutInput) checkoutInput.min = todayStr;
+
+        if (checkinInput) {
+            checkinInput.addEventListener('change', function() {
+                if (checkoutInput) {
+                    checkoutInput.min = this.value;
+                    if (checkoutInput.value && checkoutInput.value <= this.value) {
+                        checkoutInput.value = '';
+                    }
+                }
+                updateSummary();
+            });
+        }
+        if (checkoutInput) checkoutInput.addEventListener('change', updateSummary);
+        if (roomSelect)    roomSelect.addEventListener('change', updateSummary);
+        if (paymentOption) paymentOption.addEventListener('change', updateSummary);
+    </script>
+</html>

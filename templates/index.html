@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel DreamCrown | Luxury Redefined</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 9644603534</span>
+                    <span><i class="fas fa-envelope"></i> vishalchandravanshi806@gmail.com</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Bhopal, Madhya Pradesh, India</span>
+                </div>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/1FANdkGqs3/?mibextid=wwXIfr"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/dreamcrown_katarahills?igsh=MWVwb3Uza2RpNmhmMQ%3D%3D&utm_source=qr"><i class="fab fa-instagram"></i></a>        
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Dream<span>Crown</span></h1>
+                </div>
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a href="#home" class="active">Home</a></li>
+                        <li><a href="/rooms">Rooms</a></li>
+                        <li><a href="/dining">Dining</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </nav>
+                <a href="/rooms" class="btn-book">Book Now <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-subtitle">Welcome to Paradise</span>
+                <h1>Make Your Comfort <span>is Our Happiness</span></h1>
+                <p>Experience unparalleled luxury where aqua meets elegance, and every moment becomes a treasured memory.</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn btn-primary">Explore Rooms <i class="fas fa-arrow-right"></i></a>
+                    <a href="#" class="btn btn-outline">Watch Video <i class="fas fa-play"></i></a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">150+</span>
+                        <span class="stat-label">Luxury Rooms</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">5</span>
+                        <span class="stat-label">Restaurants</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Butler Service</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Luxury Amenities</span>
+                <h2 class="section-title">Experience <span>DreamCrown</span></h2>
+                <p class="section-desc">Indulge in world-class amenities designed for your comfort and pleasure.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-content">
+                    <span class="section-subtitle">Our Story</span>
+                    <h2 class="section-title">A Legacy of <span>Luxury</span></h2>
+                    <p>For over three decades, Hotel DreamCrown has been the epitome of luxury hospitality. Nestled in the heart of Mumbai, we offer an oasis of calm and sophistication.</p>
+                    <p>Every detail, from our hand-carved marble lobby to our Michelin-starred dining, has been crafted to provide an unparalleled experience for our distinguished guests.</p>
+                    <div class="about-stats">
+                        <div class="stat">
+                            <span class="stat-number">28+</span>
+                            <span class="stat-label">Years of Excellence</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">10k+</span>
+                            <span class="stat-label">Happy Guests</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">5</span>
+                            <span class="stat-label">Awards Won</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&h=700&fit=crop" alt="Hotel Lobby">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROOMS SECTION - CONVERTED TO AC & NON-AC CATEGORIES -->
+    <section class="rooms" id="rooms">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Stay in Style</span>
+                <h2 class="section-title">Luxurious <span>Accommodations</span></h2>
+                <p class="section-desc">Choose from our selection of elegantly appointed rooms and suites.</p>
+            </div>
+            
+            <!-- Room Categories Grid -->
+            <div class="room-categories">
+                <!-- AC Room Card -->
+                <div class="category-card">
+                    <div class="category-card-icon">
+                        <i class="fas fa-wind"></i>
+                    </div>
+                    <h3>Air Conditioner Rooms</h3>
+                    <p>Premium comfort with modern cooling technology. Perfect for those who prefer controlled temperature environments.</p>
+                    <div class="category-features">
+                        <span><i class="fas fa-check-circle"></i> Central AC</span>
+                        <span><i class="fas fa-check-circle"></i> Temperature Control</span>
+                        <span><i class="fas fa-check-circle"></i> Premium Comfort</span>
+                    </div>
+                    <a href="/rooms" class="btn-category">View AC Rooms <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <!-- Non AC Room Card -->
+                <div class="category-card">
+                    <div class="category-card-icon">
+                        <i class="fas fa-fan"></i>
+                    </div>
+                    <h3>Non Air Conditioner Rooms</h3>
+                    <p>Budget-friendly comfort with natural ventilation. Ideal for travelers seeking value without compromising quality.</p>
+                    <div class="category-features">
+                        <span><i class="fas fa-check-circle"></i> Ceiling Fans</span>
+                        <span><i class="fas fa-check-circle"></i> Natural Ventilation</span>
+                        <span><i class="fas fa-check-circle"></i> Budget Friendly</span>
+                    </div>
+                    <a href="/rooms" class="btn-category">View Non-AC Rooms <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OFFER SECTION -->
+    <section class="offer">
+        <div class="container">
+            <div class="offer-banner">
+                <div class="offer-content">
+                    <span class="offer-tag">Limited Time</span>
+                    <h2>Summer Escape Package</h2>
+                    <p>Book 3 nights and get 25% off on spa treatments + complimentary breakfast</p>
+                    <div class="offer-features">
+                        <div><i class="fas fa-check-circle"></i> Free Room Upgrade</div>
+                        <div><i class="fas fa-check-circle"></i> Airport Transfer</div>
+                        <div><i class="fas fa-check-circle"></i> Late Checkout</div>
+                    </div>
+                    <a href="#" class="btn btn-primary">Claim Offer <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="offer-image">
+                    <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=500&h=600&fit=crop" alt="Spa">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS SECTION -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Guest Reviews</span>
+                <h2 class="section-title">What Our <span>Guests Say</span></h2>
+                <p class="section-desc">Read testimonials from our valued guests.</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <i class="fas fa-quote-left quote-icon"></i>
+                    <p>"The most luxurious hotel I've ever stayed at. The service was impeccable and the rooms were stunning."</p>
+                    <div class="testimonial-author">
+                        <div class="author-info">
+                            <h4>Sarah Johnson</h4>
+                            <p>Business Traveler</p>
+                        </div>
+                        <div class="author-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <i class="fas fa-quote-left quote-icon"></i>
+                    <p>"The attention to detail is remarkable. From the doorman to the restaurant staff, everyone was wonderful."</p>
+                    <div class="testimonial-author">
+                        <div class="author-info">
+                            <h4>Michael Chen</h4>
+                            <p>Family Vacation</p>
+                        </div>
+                        <div class="author-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <i class="fas fa-quote-left quote-icon"></i>
+                    <p>"The spa experience was heavenly. I left feeling completely rejuvenated. Can't wait to come back!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-info">
+                            <h4>Priya Sharma</h4>
+                            <p>Honeymoon</p>
+                        </div>
+                        <div class="author-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER SECTION -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Subscribe to <span>DreamCrown</span></h2>
+                <p>Get exclusive offers and updates straight to your inbox</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Your email address" required>
+                    <button type="submit" class="btn btn-primary">Subscribe <i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+<footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Dream<span>Crown</span></h3>
+                    <p>Your comfort is our happiness. Luxury redefined with aqua and lemon elegance.</p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/share/1FANdkGqs3/?mibextid=wwXIfr"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/dreamcrown_katarahills?igsh=MWVwb3Uza2RpNmhmMQ%3D%3D&utm_source=qr"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/rooms">Rooms & Suites</a></li>
+                        <li><a href="/dining">Dining</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cancellation Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Info</h4>
+                    <ul class="footer-contact">
+                        <li><i class="fas fa-map-marker-alt"></i> Building no. 223, SwarnKunj Colony Katarahills, Bhopal, Madhya Pradesh 462043</li>
+                        <li><i class="fas fa-phone"></i> +91 9644603534</li>
+                        <li><i class="fas fa-envelope"></i> vishalchandravanshi806@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Hotel DreamCrown. All rights reserved. | Designed with <i class="fas fa-heart"></i> for luxury</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Hotel DreamCrown</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 9644603534</span>
+                    <span><i class="fas fa-envelope"></i> vishalchandravanshi806@gmail.com</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Bhopal, Madhya Pradesh, India</span>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-tripadvisor"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Dream<span>Crown</span></h1>
+                    <span class="admin-badge">Admin Panel</span>
+                </div>
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a href="/admin" class="active">Dashboard</a></li>
+                        <li><a href="/admin_bookings">Bookings</a></li>
+                        <li><a href="/admin_rooms">Rooms</a></li>
+                        <li><a href="/admin/users">Users</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </nav>
+                <div class="admin-info">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ADMIN DASHBOARD SECTION -->
+    <section class="admin-dashboard">
+        <div class="container">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-bed"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Total Bookings</h3>
+                        <p class="stat-number">{{ bookings|length }}</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Total Guests</h3>
+                        <p class="stat-number">
+                            {% set total_guests = 0 %}
+                            {% for b in bookings %}
+                                {% set total_guests = total_guests + (b.guests|int) %}
+                            {% endfor %}
+                            {{ total_guests }}
+                        </p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-week"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>This Month</h3>
+                        <p class="stat-number">
+                            {% set month_count = 0 %}
+                            {% for b in bookings %}
+                                {% if b.date[:7] == current_date[:7] %}
+                                    {% set month_count = month_count + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                            {{ month_count }}
+                        </p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Revenue</h3>
+                        <p class="stat-number">
+                            ₹ 
+                            {% set total_revenue = 0 %}
+                            {% for b in bookings %}
+                                {% set total_revenue = total_revenue + (b.amount or 0) %}
+                            {% endfor %}
+                            {{ "{:,}".format(total_revenue) }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookings Table -->
+            <div class="bookings-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-calendar-check"></i> Hotel Bookings</h2>
+                    <div class="header-actions">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search bookings...">
+                        </div>
+                        <button class="btn-export" onclick="exportTable()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="bookings-table" id="bookingsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Guest Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Check-in Date</th>
+                                <th>Check-out Date</th>
+                                <th>Guests</th>
+                                <th>Room Type</th>
+                                <th>Total (₹)</th>
+                                <th>Advance (₹)</th>
+                                <th>Remaining (₹)</th>
+                                <th>Payment Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for b in bookings %}
+                            <tr>
+                                <td>#{{ b.id }}</td>
+                                <td><strong>{{ b.name }}</strong></td>
+                                <td>{{ b.email }}</td>
+                                <td>{{ b.phone }}</td>
+                                <td><span class="date-badge"><i class="fas fa-calendar"></i> {{ b.date }}</span></td>
+                                <td><span class="date-badge"><i class="fas fa-calendar"></i> {{ b.checkout_date or 'N/A' }}</span></td>
+                                <td><span class="guest-badge"><i class="fas fa-user"></i> {{ b.guests }}</span></td>
+                                <td><span class="room-badge"><i class="fas fa-bed"></i> {{ b.room_type or 'Standard' }}</span></td>
+                                <td class="price">₹{{ "{:,}".format(b.amount or 0) }}</td>
+                                <td class="price">₹{{ "{:,}".format(b.advance_paid or 0) }}</td>
+                                <td class="price">₹{{ "{:,}".format((b.amount or 0) - (b.advance_paid or 0)) }}</td>
+                                <td>
+                                    {% if b.payment_status and 'pending' in b.payment_status|lower %}
+                                        <span class="status-pending"><i class="fas fa-clock"></i> Pending</span>
+                                    {% elif b.payment_status|lower == "confirmed" %}
+                                        <span class="status-confirmed"><i class="fas fa-check-circle"></i> Confirmed</span>
+                                    {% elif b.payment_status|lower == "rejected" %}
+                                        <span class="status-rejected"><i class="fas fa-times-circle"></i> Rejected</span>
+                                    {% else %}
+                                        <span class="status-other">{{ b.payment_status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="actions">
+                                    {% if b.payment_status and 'pending' in b.payment_status|lower %}
+                                        <a href="/verify/{{ b.id }}" class="btn-verify" title="Verify Booking">
+                                            <i class="fas fa-check"></i> Verify
+                                        </a>
+                                        <a href="/reject/{{ b.id }}" class="btn-reject" title="Reject Booking" onclick="return confirm('Are you sure you want to reject this booking?')">
+                                            <i class="fas fa-times"></i> Reject
+                                        </a>
+                                    {% endif %}
+                                    <a href="/delete/{{ b.id }}" class="btn-delete" title="Delete Booking" onclick="return confirm('Are you sure you want to delete this booking?')">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            
+                            {% if bookings|length == 0 %}
+                            <tr class="empty-row">
+                                <td colspan="13">
+                                    <div class="empty-state">
+                                        <i class="fas fa-calendar-times"></i>
+                                        <p>No bookings found</p>
+                                        <span>New bookings will appear here</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-section">
+                    <div class="pagination-info">
+                        Showing <span id="startCount">1</span> to <span id="endCount">10</span> of <span id="totalCount">{{ bookings|length }}</span> entries
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="page-btn" onclick="prevPage()" id="prevBtn">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <span class="page-numbers" id="pageNumbers"></span>
+                        <button class="page-btn" onclick="nextPage()" id="nextBtn">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Dream<span>Crown</span></h3>
+                    <p>Hotel Management System - Admin Dashboard</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-tripadvisor"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Website Home</a></li>
+                        <li><a href="/admin">Dashboard</a></li>
+                        <li><a href="/admin/bookings">Bookings</a></li>
+                        <li><a href="/admin/rooms">Rooms</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Reports</h4>
+                    <ul>
+                        <li><a href="#">Booking Report</a></li>
+                        <li><a href="#">Revenue Report</a></li>
+                        <li><a href="#">Occupancy Report</a></li>
+                        <li><a href="#">Guest Analytics</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>System Info</h4>
+                    <ul class="footer-contact">
+                        <li><i class="fas fa-clock"></i> Last Login: Today</li>
+                        <li><i class="fas fa-database"></i> Total Records: {{ bookings|length }}</li>
+                        <li><i class="fas fa-server"></i> Version: 2.0.0</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Hotel DreamCrown Admin Panel. All rights reserved. | Secure Management System</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchValue = this.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#bookingsTable tbody tr:not(.empty-row)');
+            
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            updatePagination();
+        });
+        
+        // Pagination
+        let currentPage = 1;
+        const rowsPerPage = 10;
+        
+        function showPage(page) {
+            const rows = document.querySelectorAll('#bookingsTable tbody tr:not(.empty-row)');
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            
+            rows.forEach((row, index) => {
+                if (index >= start && index < end && row.style.display !== 'none') {
+                    row.style.display = '';
+                } else if (row.style.display !== 'none') {
+                    row.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('startCount').textContent = rows.length > 0 ? start + 1 : 0;
+            document.getElementById('endCount').textContent = Math.min(end, rows.length);
+            document.getElementById('totalCount').textContent = rows.length;
+            
+            document.getElementById('prevBtn').disabled = page === 1;
+            document.getElementById('nextBtn').disabled = end >= rows.length;
+            
+            updatePageNumbers(page, rows.length);
+        }
+        
+        function updatePageNumbers(current, totalRows) {
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+            const pageNumbersDiv = document.getElementById('pageNumbers');
+            pageNumbersDiv.innerHTML = '';
+            
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = `page-number ${i === current ? 'active' : ''}`;
+                btn.onclick = () => {
+                    currentPage = i;
+                    showPage(currentPage);
+                };
+                pageNumbersDiv.appendChild(btn);
+            }
+        }
+        
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                showPage(currentPage);
+            }
+        }
+        
+        function nextPage() {
+            const rows = document.querySelectorAll('#bookingsTable tbody tr:not(.empty-row)');
+            const totalPages = Math.ceil(rows.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                showPage(currentPage);
+            }
+        }
+        
+        function updatePagination() {
+            currentPage = 1;
+            showPage(1);
+        }
+        
+        // Export table to CSV
+        function exportTable() {
+            const table = document.getElementById('bookingsTable');
+            const rows = table.querySelectorAll('tr');
+            const csv = [];
+            
+            rows.forEach(row => {
+                const rowData = [];
+                const cells = row.querySelectorAll('th, td');
+                cells.forEach(cell => {
+                    let text = cell.innerText;
+                    csv.push(text.replace(/,/g, ' '));
+                });
+                if (rowData.length > 0) {
+                    csv.push(rowData.join(','));
+                }
+            });
+            
+            const csvContent = csv.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'hotel_bookings.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+let lastCount = 0;
+
+// initial count load
+fetch("/pending_count")
+.then(res => res.json())
+.then(data => {
+    lastCount = data.count;
+});
+
+setInterval(function(){
+
+fetch("/pending_count")
+.then(res => res.json())
+.then(data => {
+
+    if(data.count > lastCount){
+        lastCount = data.count;   // update count
+        location.reload();
+    }
+
+});
+
+},3000);
+        
+        // Initialize pagination on load
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage(1);
+        });
+    </script>
+</body>
+</html>
