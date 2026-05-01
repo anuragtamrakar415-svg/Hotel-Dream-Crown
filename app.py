@@ -35,6 +35,7 @@ class Booking(db.Model):
     utr = db.Column(db.String(100))
     hold_until = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    utr = db.Column(db.String(100), unique=True, nullable=True) 
 
 
 class Admin(db.Model):
