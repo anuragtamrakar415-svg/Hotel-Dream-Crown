@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmed | Hotel DreamCrown</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/confirm.css') }}">
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 9644603534</span>
+                    <span><i class="fas fa-envelope"></i> vishalchandravanshi806@gmail.com</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Bhopal, Madhya Pradesh, India</span>
+                </div>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/1FANdkGqs3/?mibextid=wwXIfr"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/dreamcrown_katarahills?igsh=MWVwb3Uza2RpNmhmMQ%3D%3D&utm_source=qr"><i class="fab fa-instagram"></i></a>        
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Dream<span>Crown</span></h1>
+                </div>
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/rooms">Rooms</a></li>
+                        <li><a href="/dining">Dining</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </nav>
+                <a href="/rooms" class="btn-book">Book Now <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- SUCCESS SECTION -->
+    <section class="success-section">
+        <div class="container">
+            <div class="success-card">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h1>Booking Confirmed!</h1>
+                <p>Your room has been successfully booked at Hotel DreamCrown.</p>
+                
+<div class="booking-details">
+
+{% if booking.payment_status == "Confirmed" %}
+
+<h2 style="color:green;">Booking Confirmed ✅</h2>
+<p>Your room has been successfully booked.</p>
+
+{% elif booking.payment_status == "Rejected" %}
+
+<h2 style="color:red;">Payment Rejected ❌</h2>
+<p>Your payment could not be verified. Please contact hotel support.</p>
+
+{% else %}
+
+<h2 style="color:orange;">Status: Pending Verification ⏳</h2>
+<p>Estimated verification time: <span id="timer">05:00</span></p>
+
+{% endif %}
+                    <h3><i class="fas fa-ticket-alt"></i> Booking Details</h3>
+                    <div class="details-grid">
+                        <div class="detail-item">
+<span class="detail-label">Booking ID:</span>
+<span class="detail-value">#DCHB{{ booking.id }}</span>
+</div>
+
+<div class="detail-item">
+<span class="detail-label">Guest Name:</span>
+<span class="detail-value">{{ booking.name }}</span>
+</div>
+
+<div class="detail-item">
+<span class="detail-label">Check-in Date:</span>
+<span class="detail-value">{{ booking.date }}</span>
+</div>
+
+<div class="detail-item">
+<span class="detail-label">Room Type:</span>
+<span class="detail-value">{{ room.name }}</span>
+</div>
+
+<div class="detail-item">
+<span class="detail-label">Total Amount:</span>
+<span class="detail-value price">₹{{ booking.amount }}</span>
+</div>
+                    </div>
+                </div>
+
+                <div class="confirmation-message">
+                    <i class="fas fa-envelope"></i>
+                    <p>A confirmation email has been sent to your registered email address with all the booking details.</p>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="/" class="btn-home">
+                        <i class="fas fa-home"></i> Go to Home
+                    </a>
+                    <a href="/rooms" class="btn-rooms">
+                        <i class="fas fa-bed"></i> View Other Rooms
+                    </a>
+                    <a href="#" class="btn-print" onclick="window.print(); return false;">
+                        <i class="fas fa-print"></i> Print Confirmation
+                    </a>
+                </div>
+
+                <div class="need-help">
+                    <i class="fas fa-headset"></i>
+                    <p>Need assistance? Call us at <strong>+91 98765 43210</strong> or email <strong>reservations@dreamcrown.com</strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+<footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Dream<span>Crown</span></h3>
+                    <p>Your comfort is our happiness. Luxury redefined with aqua and lemon elegance.</p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/share/1FANdkGqs3/?mibextid=wwXIfr"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/dreamcrown_katarahills?igsh=MWVwb3Uza2RpNmhmMQ%3D%3D&utm_source=qr"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/rooms">Rooms & Suites</a></li>
+                        <li><a href="/dining">Dining</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cancellation Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Info</h4>
+                    <ul class="footer-contact">
+                        <li><i class="fas fa-map-marker-alt"></i> Building no. 223, SwarnKunj Colony Katarahills, Bhopal, Madhya Pradesh 462043</li>
+                        <li><i class="fas fa-phone"></i> +91 9644603534</li>
+                        <li><i class="fas fa-envelope"></i> vishalchandravanshi806@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Hotel DreamCrown. All rights reserved. | Designed with <i class="fas fa-heart"></i> for luxury</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+<script>
+
+
+let time = 300;
+
+let timer = setInterval(function(){
+
+let minutes = Math.floor(time / 60);
+let seconds = time % 60;
+
+document.getElementById("timer").innerHTML =
+minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
+
+time--;
+
+if(time < 0){
+clearInterval(timer);
+document.getElementById("timer").innerHTML = "Verification in progress";
+}
+
+},1000); 
+
+setInterval(function(){
+
+fetch("/booking-status/{{ booking.id }}")
+.then(res => res.json())
+.then(data => {
+
+if(data.status == "Confirmed"){
+location.reload();
+}
+
+if(data.status == "Rejected"){
+location.reload();
+}
+
+});
+
+},8000);
+
+
+</script>

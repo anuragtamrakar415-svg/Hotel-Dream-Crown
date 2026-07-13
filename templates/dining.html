@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dining Options | Hotel DreamCrown</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dining.css') }}">
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 9644603534</span>
+                    <span><i class="fas fa-envelope"></i> vishalchandravanshi806@gmail.com</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Bhopal, Madhya Pradesh, India</span>
+                </div>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/1FANdkGqs3/?mibextid=wwXIfr"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/dreamcrown_katarahills?igsh=MWVwb3Uza2RpNmhmMQ%3D%3D&utm_source=qr"><i class="fab fa-instagram"></i></a>        
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Dream<span>Crown</span></h1>
+                </div>
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/rooms">Rooms</a></li>
+                        <li><a href="/dining" class="active">Dining</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </nav>
+                <a href="/rooms" class="btn-book">Book Now <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="dining-hero">
+        <div class="container">
+            <div class="hero-wrapper">
+                <div class="hero-badge">Order Food Online</div>
+                <h1>Choose Your <span>Dining Experience</span></h1>
+                <p>Select from our premium partner platforms or order directly from our hotel service for a truly luxurious dining experience.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- DINING OPTIONS SECTION -->
+    <section class="dining-options">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Food Delivery Partners</div>
+                <h2 class="section-title">Order From <span>Your Favorite</span></h2>
+                <p class="section-desc">Enjoy delicious meals delivered right to your room from our trusted partners</p>
+            </div>
+            <div class="options-container">
+                <div class="options-row">
+                    <!-- Zomato Card -->
+                    <div class="option-card">
+                        <div class="card-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h3>Zomato</h3>
+                        <p class="card-description">Order from India's favorite food delivery platform</p>
+                        <div class="card-features-list">
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>10,000+ Restaurants</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Express Delivery</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Exclusive Offers</span>
+                            </div>
+                        </div>
+                        <a href="https://www.zomato.com/" target="_blank" class="btn-order zomato-btn">
+                            Order Now <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <!-- Swiggy Card -->
+                    <div class="option-card">
+                        <div class="card-icon">
+                            <i class="fas fa-pizza-slice"></i>
+                        </div>
+                        <h3>Swiggy</h3>
+                        <p class="card-description">Fastest food delivery with amazing deals</p>
+                        <div class="card-features-list">
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>24/7 Delivery</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Live Tracking</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Free Delivery</span>
+                            </div>
+                        </div>
+                        <a href="https://www.swiggy.com/" target="_blank" class="btn-order swiggy-btn">
+                            Order Now <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <!-- Hotel Service Card -->
+                    <div class="option-card featured">
+                        <div class="recommended-badge">Recommended</div>
+                        <div class="card-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h3>Hotel Service</h3>
+                        <p class="card-description">Experience our in-house culinary excellence</p>
+                        <div class="card-features-list">
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Michelin Star Chef</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Fresh Ingredients</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>24/7 Room Service</span>
+                            </div>
+                        </div>
+                        <a href="contact.html" class="btn-order hotel-btn">
+                            Contact Us <i class="fas fa-concierge-bell"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SIGNATURE DISHES SECTION -->
+    <section class="signature-dishes">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Chef's Specials</div>
+                <h2 class="section-title">Our Signature <span>Dishes</span></h2>
+                <p class="section-desc">Experience the finest culinary creations from our expert chefs</p>
+            </div>
+            <div class="dishes-container">
+                <div class="dishes-row">
+                    <div class="dish-card">
+                        <div class="dish-img">
+                            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop" alt="Butter Chicken">
+                        </div>
+                        <div class="dish-content">
+                            <h3>Butter Chicken</h3>
+                            <p>Creamy tomato-based curry with tender chicken</p>
+                            <div class="dish-price">$24.99</div>
+                        </div>
+                    </div>
+                    <div class="dish-card">
+                        <div class="dish-img">
+                            <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop" alt="Paneer Tikka">
+                        </div>
+                        <div class="dish-content">
+                            <h3>Paneer Tikka</h3>
+                            <p>Marinated cottage cheese grilled to perfection</p>
+                            <div class="dish-price">$18.99</div>
+                        </div>
+                    </div>
+                    <div class="dish-card">
+                        <div class="dish-img">
+                            <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop" alt="Royal Biryani">
+                        </div>
+                        <div class="dish-content">
+                            <h3>Royal Biryani</h3>
+                            <p>Aromatic basmati rice with tender meat</p>
+                            <div class="dish-price">$22.99</div>
+                        </div>
+                    </div>
+                    <div class="dish-card">
+                        <div class="dish-img">
+                            <img src="https://images.unsplash.com/photo-1514326640560-7d063ef2aed5?w=400&h=300&fit=crop" alt="Gulab Jamun">
+                        </div>
+                        <div class="dish-content">
+                            <h3>Gulab Jamun</h3>
+                            <p>Sweet milk dumplings in rose syrup</p>
+                            <div class="dish-price">$8.99</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RESTAURANT SECTION -->
+    <section class="restaurant-section">
+        <div class="container">
+            <div class="restaurant-wrapper">
+                <div class="restaurant-content">
+                    <div class="section-subtitle">Our Restaurants</div>
+                    <h2>Dine at <span>DreamCrown</span></h2>
+                    <p>Experience world-class dining at our award-winning restaurants, each offering a unique culinary journey.</p>
+                    <div class="restaurant-list">
+                        <div class="restaurant-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Aqua Terrace - Seafood & Grill</span>
+                        </div>
+                        <div class="restaurant-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Lemon Garden - Organic & Fresh</span>
+                        </div>
+                        <div class="restaurant-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Black & White - Fine Dining</span>
+                        </div>
+                        <div class="restaurant-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>The Royal Kitchen - Indian Cuisine</span>
+                        </div>
+                    </div>
+                    <a href="contact.html" class="btn-reservation">
+                        Make a Reservation <i class="fas fa-calendar-alt"></i>
+                    </a>
+                </div>
+                <div class="restaurant-image">
+                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=500&fit=crop" alt="DreamCrown Restaurant">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS SECTION -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-subtitle">Guest Reviews</div>
+                <h2 class="section-title">What Our <span>Guests Say</span></h2>
+                <p class="section-desc">Read testimonials from our valued guests about their dining experience</p>
+            </div>
+            <div class="testimonials-container">
+                <div class="testimonials-row">
+                    <div class="testimonial-card">
+                        <i class="fas fa-quote-left quote-icon"></i>
+                        <p>"The food from their in-house restaurant was absolutely divine. Best Butter Chicken I've ever had!"</p>
+                        <div class="testimonial-footer">
+                            <div class="author-details">
+                                <h4>Rahul Mehta</h4>
+                                <p>Food Enthusiast</p>
+                            </div>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <i class="fas fa-quote-left quote-icon"></i>
+                        <p>"Ordered via Zomato, the delivery was quick and the food was still hot and delicious. Highly recommended!"</p>
+                        <div class="testimonial-footer">
+                            <div class="author-details">
+                                <h4>Priya Sharma</h4>
+                                <p>Business Traveler</p>
+                            </div>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <i class="fas fa-quote-left quote-icon"></i>
+                        <p>"The hotel's room service is exceptional. The biryani was authentic and perfectly spiced. 5 stars!"</p>
+                        <div class="testimonial-footer">
+                            <div class="author-details">
+                                <h4>Anjali Desai</h4>
+                                <p>Family Vacation</p>
+                            </div>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER SECTION -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-wrapper">
+                <h2>Subscribe to <span>DreamCrown</span></h2>
+                <p>Get exclusive dining offers and updates straight to your inbox</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Your email address" required>
+                    <button type="submit">Subscribe <i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Dream<span>Crown</span></h3>
+                    <p>Your comfort is our happiness. Luxury redefined with aqua and lemon elegance.</p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/share/1FANdkGqs3/?mibextid=wwXIfr"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/dreamcrown_katarahills?igsh=MWVwb3Uza2RpNmhmMQ%3D%3D&utm_source=qr"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/rooms">Rooms & Suites</a></li>
+                        <li><a href="/dining">Dining</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cancellation Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Info</h4>
+                    <ul class="footer-contact">
+                        <li><i class="fas fa-map-marker-alt"></i> Building no. 223, SwarnKunj Colony Katarahills, Bhopal, Madhya Pradesh 462043</li>
+                        <li><i class="fas fa-phone"></i> +91 9644603534</li>
+                        <li><i class="fas fa-envelope"></i> vishalchandravanshi806@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Hotel DreamCrown. All rights reserved. | Designed with <i class="fas fa-heart"></i> for luxury</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

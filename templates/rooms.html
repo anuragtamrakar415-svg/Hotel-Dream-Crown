@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooms | Hotel DreamCrown</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/rooms.css') }}">
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 9644603534</span>
+                    <span><i class="fas fa-envelope"></i> vishalchandravanshi806@gmail.com</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Bhopal, Madhya Pradesh, India</span>
+                </div>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/1FANdkGqs3/?mibextid=wwXIfr"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/dreamcrown_katarahills?igsh=MWVwb3Uza2RpNmhmMQ%3D%3D&utm_source=qr"><i class="fab fa-instagram"></i></a>        
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Dream<span>Crown</span></h1>
+                </div>
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/rooms" class="active">Rooms</a></li>
+                        <li><a href="/dining">Dining</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </nav>
+                <a href="/rooms" class="btn-book">Book Now <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- PAGE HERO SECTION -->
+    <section class="page-hero">
+        <div class="container">
+            <div class="page-hero-content">
+                <span class="hero-subtitle">Stay in Style</span>
+                <h1>Luxurious <span>Accommodations</span></h1>
+                <p>Choose from our selection of elegantly appointed rooms and suites designed for your ultimate comfort.</p>
+            </div>
+        </div>
+ </section>
+
+<!-- DATE CHECK SECTION -->
+<!-- Availability Checker Section - Add to your rooms.html -->
+<section class="availability-checker">
+    <div class="container">
+        <div class="availability-wrapper">
+            <div class="availability-content">
+                <div class="availability-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3>Check Room Availability</h3>
+                <p>Select your check-in date to see available rooms</p>
+                
+                <form method="GET" action="/rooms" class="availability-form">
+                    <div class="form-group">
+                        <label for="check_date">
+                            <i class="fas fa-calendar-alt"></i>
+                            Check-in Date
+                        </label>
+                        <input type="date" 
+                               id="check_date" 
+                               name="date" 
+                               value="{{ selected_date }}" 
+                               min="{{ today_date }}" 
+                               required>
+                    </div>
+                    <button type="submit" class="btn-check-availability">
+                        <i class="fas fa-search"></i>
+                        Check Availability
+                    </button>
+                </form>
+                
+                {% if selected_date %}
+                <div class="availability-note">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Showing rooms available from <strong>{{ selected_date }}</strong></span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+    <!-- AIR CONDITIONER ROOMS SECTION (4 ROOMS) -->
+    <section class="rooms-category">
+        <div class="container">
+            <div class="category-header">
+                <div class="category-icon">
+                    <i class="fas fa-wind"></i>
+                </div>
+                <div class="category-info">
+                    <h2>Air Conditioner Rooms</h2>
+                    <p>Stay cool and comfortable in our premium AC rooms with modern amenities</p>
+                </div>
+            </div>
+            <div class="rooms-grid">
+                {% set ac_rooms = [] %}
+                {% for room in rooms %}
+                    {% if "Air Conditioning" in room.features %}
+                        {% set _ = ac_rooms.append(room) %}
+                    {% endif %}
+                {% endfor %}
+                
+                {% for room in ac_rooms %}
+                    <div class="room-card">
+                        <div class="room-image">
+                            <img src="{{ room.image }}" alt="{{ room.name }}">
+                            {% if loop.index == 1 %}
+                                <span class="room-badge">Popular Choice</span>
+                            {% elif loop.index == 2 %}
+                                <span class="room-badge">Popular Choice</span>
+                            {% elif loop.index == 3 %}
+                                <span class="room-badge">Popular Choice</span>
+                            {% elif loop.index == 4 %}
+                                <span class="room-badge exclusive">Presidential</span>
+                            {% endif %}
+                        </div>
+                        <div class="room-info">
+                            <h3>{{ room.name }}</h3>
+                            <p>{{ room.desc }}</p>
+                            <div class="room-features">
+                                {% for feature in room.features[:4] %}
+                                    <span><i class="fas fa-check-circle"></i> {{ feature }}</span>
+                                {% endfor %}
+                                {% if room.features|length > 4 %}
+                                    <span class="more-features">+{{ room.features|length - 4 }} more</span>
+                                {% endif %}
+                            </div> 
+                            <div class="room-price">
+                                <span class="price">₹{{ room.price }} <span>/ night</span></span>
+                                {% if room.id in booked_rooms %}
+                                    <button class="btn-small disabled" disabled>
+                                        <i class="fas fa-check"></i> Booked
+                                    </button>
+                                {% else %}
+                                    <a href="/book/{{ room.id }}" class="btn-small">
+                                        Book Now <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- NON AIR CONDITIONER ROOMS SECTION (3 ROOMS) -->
+    <section class="rooms-category alt-bg">
+        <div class="container">
+            <div class="category-header">
+                <div class="category-icon">
+                    <i class="fas fa-fan"></i>
+                </div>
+                <div class="category-info">
+                    <h2>Non Air Conditioner Rooms</h2>
+                    <p>Budget-friendly rooms with natural ventilation and comfortable ambiance</p>
+                </div>
+            </div>
+            <div class="rooms-grid">
+                {% set non_ac_rooms = [] %}
+                {% for room in rooms %}
+                    {% if "Air Conditioning" not in room.features %}
+                        {% set _ = non_ac_rooms.append(room) %}
+                    {% endif %}
+                {% endfor %}
+                
+                {% for room in non_ac_rooms %}
+                    <div class="room-card">
+                        <div class="room-image">
+                            <img src="{{ room.image }}" alt="{{ room.name }}">
+                            {% if loop.index == 1 %}
+                                <span class="room-badge">Budget Friendly</span>
+                            {% elif loop.index == 2 %}
+                                <span class="room-badge">Budget Friendly</span>
+                            {% elif loop.index == 3 %}
+                                <span class="room-badge">Budget Friendly</span>
+                            {% endif %}
+                        </div>
+                        <div class="room-info">
+                            <h3>{{ room.name }}</h3>
+                            <p>{{ room.desc }}</p>
+                            <div class="room-features">
+                                {% for feature in room.features[:4] %}
+                                    <span><i class="fas fa-check-circle"></i> {{ feature }}</span>
+                                {% endfor %}
+                                {% if room.features|length > 4 %}
+                                    <span class="more-features">+{{ room.features|length - 4 }} more</span>
+                                {% endif %}
+                            </div>
+                            <div class="room-price">
+                                <span class="price">₹{{ room.price }} <span>/ night</span></span>
+                                {% if room.id in booked_rooms %}
+                                    <button class="btn-small disabled" disabled>
+                                        <i class="fas fa-check"></i> Booked
+                                    </button>
+                                {% else %}
+                                    <a href="/book/{{ room.id }}" class="btn-small">
+                                        Book Now <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- OFFER BANNER -->
+    <section class="offer-banner">
+        <div class="container">
+            <div class="offer-banner-content">
+                <span class="offer-tag">Limited Time Offer</span>
+                <h2>Summer Escape Package</h2>
+                <p>Book 3 nights and get 25% off on spa treatments + complimentary breakfast</p>
+                <div class="offer-features">
+                    <span><i class="fas fa-check-circle"></i> Free Room Upgrade</span>
+                    <span><i class="fas fa-check-circle"></i> Airport Transfer</span>
+                    <span><i class="fas fa-check-circle"></i> Late Checkout</span>
+                </div>
+                <a href="#" class="btn-primary">Claim Offer <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Dream<span>Crown</span></h3>
+                    <p>Your comfort is our happiness. Luxury redefined with aqua and lemon elegance.</p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/share/1FANdkGqs3/?mibextid=wwXIfr"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/dreamcrown_katarahills?igsh=MWVwb3Uza2RpNmhmMQ%3D%3D&utm_source=qr"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/rooms">Rooms & Suites</a></li>
+                        <li><a href="/dining">Dining</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cancellation Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Info</h4>
+                    <ul class="footer-contact">
+                        <li><i class="fas fa-map-marker-alt"></i> Building no. 223, SwarnKunj Colony Katarahills, Bhopal, Madhya Pradesh 462043</li>
+                        <li><i class="fas fa-phone"></i> +91 9644603534</li>
+                        <li><i class="fas fa-envelope"></i> vishalchandravanshi806@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Hotel DreamCrown. All rights reserved. | Designed with <i class="fas fa-heart"></i> for luxury</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

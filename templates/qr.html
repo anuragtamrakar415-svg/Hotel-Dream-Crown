@@ -1,0 +1,14 @@
+<section class="payment">
+    <h2>Complete Your Payment</h2>
+    
+    <p>Scan this QR Code and pay</p>
+
+    <img src="/static/qr.png" width="250">
+
+    <form action="/payment_upload" method="POST" enctype="multipart/form-data">
+        <label>Upload Payment Screenshot</label>
+        <input type="file" name="screenshot" required>
+
+        <button type="submit">Submit Payment</button>
+    </form>
+</section>

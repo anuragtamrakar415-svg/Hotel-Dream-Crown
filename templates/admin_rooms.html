@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Rooms | Hotel DreamCrown</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_rooms.css') }}">
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-content">
+                <div class="contact-info">
+                    <span><i class="fas fa-phone-alt"></i> +91 98765 43210</span>
+                    <span><i class="fas fa-envelope"></i> admin@dreamcrown.com</span>
+                    <span><i class="fas fa-map-marker-alt"></i> Bhopal, India</span>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Dream<span>Crown</span></h1>
+                    <span class="admin-badge">Admin Panel</span>
+                </div>
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a href="/admin">Dashboard</a></li>
+                        <li><a href="/admin_bookings">Bookings</a></li>
+                        <li><a href="/admin_rooms" class="active">Rooms</a></li>
+                        <li><a href="/change-password">Settings</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </nav>
+                <div class="admin-info">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+        <div class="container">
+            <div class="page-hero-content">
+                <span class="hero-subtitle">Manage Rooms</span>
+                <h1>Room <span>Management</span></h1>
+                <p>View and manage all hotel rooms, their status, and availability.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS SECTION -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon total-icon">
+                        <i class="fas fa-bed"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Total Rooms</h3>
+                        <p class="stat-number">{{ rooms|length }}</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon available-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Available</h3>
+                        <p class="stat-number">
+                            {% set available = rooms|selectattr("status", "equalto", "available")|list %}
+                            {{ available|length }}
+                        </p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon online-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Online Booked</h3>
+                        <p class="stat-number">
+                            {% set online = rooms|selectattr("status", "equalto", "online_booked")|list %}
+                            {{ online|length }}
+                        </p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon offline-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Offline Booked</h3>
+                        <p class="stat-number">
+                            {% set offline = rooms|selectattr("status", "equalto", "offline_booked")|list %}
+                            {{ offline|length }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FILTER SECTION -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-card">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label><i class="fas fa-filter"></i> Filter by Status</label>
+                        <select id="statusFilter" class="filter-input">
+                            <option value="all">All Rooms</option>
+                            <option value="available">Available</option>
+                            <option value="online_booked">Online Booked</option>
+                            <option value="offline_booked">Offline Booked</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-search"></i> Search Room</label>
+                        <div class="search-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Room number, type...">
+                        </div>
+                    </div>
+                    <button class="btn-reset" onclick="resetFilters()">
+                        <i class="fas fa-undo-alt"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BULK ACTIONS BAR -->
+    <section class="bulk-actions-section">
+        <div class="container">
+            <div class="bulk-actions-card" id="bulkActions" style="display: none;">
+                <div class="bulk-info">
+                    <i class="fas fa-check-square"></i>
+                    <span><span id="selectedCount">0</span> rooms selected</span>
+                </div>
+                <div class="bulk-buttons">
+                    <button class="bulk-make-available" onclick="bulkMakeAvailable()">
+                        <i class="fas fa-check-circle"></i> Make Available
+                    </button>
+                    <button class="bulk-delete" onclick="bulkDeleteRooms()">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
+                    <button class="bulk-cancel" onclick="clearSelection()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROOMS SECTION -->
+    <section class="rooms-section">
+        <div class="container">
+            <div class="rooms-header">
+                <h2><i class="fas fa-door-open"></i> All Rooms</h2>
+                <div class="header-actions">
+                    <button class="btn-select-all" onclick="toggleSelectAll()">
+                        <i class="fas fa-check-double"></i> Select All
+                    </button>
+                    <button class="btn-export" onclick="exportRooms()">
+                        <i class="fas fa-download"></i> Export Report
+                    </button>
+                </div>
+            </div>
+
+            <div class="room-container" id="roomContainer">
+                {% for room in rooms %}
+                <div class="room-card" data-id="{{ room.id }}" data-status="{{ room.status }}" data-room-number="{{ room.room_number }}" data-room-type="{{ room.room_type }}">
+                    <div class="room-checkbox">
+                        <input type="checkbox" class="room-select" value="{{ room.id }}" onchange="updateBulkActions()">
+                    </div>
+                    <div class="room-number">
+                        <i class="fas fa-hashtag"></i>
+                        <h3>Room {{ room.room_number }}</h3>
+                    </div>
+                    <div class="room-details">
+                        <div class="detail-item">
+                            <i class="fas fa-bed"></i>
+                            <span>Type: <strong>{{ room.room_type }}</strong></span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-tag"></i>
+                            <span>Price: <strong>₹{{ "{:,}".format(room.price) }}</strong> / night</span>
+                        </div>
+                        {% if room.features %}
+                        <div class="detail-item features">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Features: {{ room.features|join(", ") }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="room-status">
+                        {% if room.status == "available" %}
+                            <span class="status-badge available">
+                                <i class="fas fa-check-circle"></i> Available
+                            </span>
+                            <a href="/offline_book/{{ room.id }}" class="btn-offline">
+                                <i class="fas fa-calendar-plus"></i> Offline Book
+                            </a>
+                        {% elif room.status == "offline_booked" %}
+                            <span class="status-badge offline">
+                                <i class="fas fa-calendar-check"></i> Offline Booked
+                            </span>
+                            <div class="action-buttons">
+                                <button class="btn-make-available" onclick="makeAvailable({{ room.id }})">
+                                    <i class="fas fa-check-circle"></i> Make Available
+                                </button>
+                                <button class="btn-view" onclick="viewBooking({{ room.id }})">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                            </div>
+                        {% elif room.status == "online_booked" %}
+                            <span class="status-badge online">
+                                <i class="fas fa-globe"></i> Online Booked
+                            </span>
+                            <div class="action-buttons">
+                                <button class="btn-make-available" onclick="makeAvailable({{ room.id }})">
+                                    <i class="fas fa-check-circle"></i> Make Available
+                                </button>
+                                <button class="btn-view" onclick="viewBooking({{ room.id }})">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% if rooms|length == 0 %}
+                <div class="empty-state">
+                    <i class="fas fa-bed"></i>
+                    <p>No rooms found</p>
+                    <span>Add rooms to get started</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-section" id="pagination">
+                <div class="pagination-info">
+                    Showing <span id="startCount">1</span> to <span id="endCount">10</span> of <span id="totalCount">{{ rooms|length }}</span> rooms
+                </div>
+                <div class="pagination-controls">
+                    <button class="page-btn" onclick="prevPage()" id="prevBtn">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                    <span class="page-numbers" id="pageNumbers"></span>
+                    <button class="page-btn" onclick="nextPage()" id="nextBtn">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VIEW BOOKING MODAL -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-receipt"></i> Booking Details</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CONFIRM MODAL -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3><i class="fas fa-question-circle"></i> Confirm Action</h3>
+                <span class="close" onclick="closeConfirmModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="confirmModalBody">
+                <p>Are you sure you want to make this room available?</p>
+                <p class="warning-text">This will remove any existing booking for this room.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeConfirmModal()">Cancel</button>
+                <button class="btn-confirm" id="confirmActionBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Dream<span>Crown</span></h3>
+                    <p>Hotel Management System - Admin Rooms</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/admin">Dashboard</a></li>
+                        <li><a href="/admin_bookings">Bookings</a></li>
+                        <li><a href="/admin_rooms">Rooms</a></li>
+                        <li><a href="/change-password">Settings</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Reports</h4>
+                    <ul>
+                        <li><a href="#" onclick="exportRooms()">Export Rooms</a></li>
+                        <li><a href="#">Availability Report</a></li>
+                        <li><a href="#">Occupancy Report</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>System Info</h4>
+                    <ul class="footer-contact">
+                        <li><i class="fas fa-clock"></i> Last Login: Today</li>
+                        <li><i class="fas fa-bed"></i> Total Rooms: {{ rooms|length }}</li>
+                        <li><i class="fas fa-server"></i> Version: 2.0.0</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Hotel DreamCrown Admin Panel. All rights reserved. | Secure Management System</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Filter and Search functionality
+        let currentPage = 1;
+        const rowsPerPage = 6;
+        let allRooms = {{ rooms|tojson }};
+        let filteredRooms = [...allRooms];
+        let pendingAction = null;
+
+        // Apply filters
+        function applyFilters() {
+            const status = document.getElementById('statusFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            filteredRooms = allRooms.filter(room => {
+                if (status !== 'all' && room.status !== status) return false;
+                if (searchTerm) {
+                    const roomNumberMatch = room.room_number.toString().includes(searchTerm);
+                    const roomTypeMatch = (room.room_type || '').toLowerCase().includes(searchTerm);
+                    if (!roomNumberMatch && !roomTypeMatch) return false;
+                }
+                return true;
+            });
+
+            currentPage = 1;
+            renderRooms();
+            updateStats();
+        }
+
+        function resetFilters() {
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('searchInput').value = '';
+            applyFilters();
+        }
+
+        function updateStats() {
+            const available = filteredRooms.filter(r => r.status === 'available').length;
+            const online = filteredRooms.filter(r => r.status === 'online_booked').length;
+            const offline = filteredRooms.filter(r => r.status === 'offline_booked').length;
+            
+            document.querySelector('.stat-card:nth-child(2) .stat-number').textContent = available;
+            document.querySelector('.stat-card:nth-child(3) .stat-number').textContent = online;
+            document.querySelector('.stat-card:nth-child(4) .stat-number').textContent = offline;
+        }
+
+        function renderRooms() {
+            const container = document.getElementById('roomContainer');
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const pageRooms = filteredRooms.slice(start, end);
+
+            if (pageRooms.length === 0) {
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-bed"></i><p>No rooms found</p><span>Try adjusting your filters</span></div>`;
+                document.getElementById('startCount').textContent = 0;
+                document.getElementById('endCount').textContent = 0;
+                document.getElementById('totalCount').textContent = filteredRooms.length;
+                return;
+            }
+
+            let html = '';
+            pageRooms.forEach(room => {
+                let statusHtml = '';
+                if (room.status === 'available') {
+                    statusHtml = `
+                        <span class="status-badge available">
+                            <i class="fas fa-check-circle"></i> Available
+                        </span>
+                        <a href="/offline_book/${room.id}" class="btn-offline">
+                            <i class="fas fa-calendar-plus"></i> Offline Book
+                        </a>
+                    `;
+                } else if (room.status === 'offline_booked') {
+                    statusHtml = `
+                        <span class="status-badge offline">
+                            <i class="fas fa-calendar-check"></i> Offline Booked
+                        </span>
+                        <div class="action-buttons">
+                            <button class="btn-make-available" onclick="showMakeAvailableConfirm(${room.id})">
+                                <i class="fas fa-check-circle"></i> Make Available
+                            </button>
+                            <button class="btn-view" onclick="viewBooking(${room.id})">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+                        </div>
+                    `;
+                } else if (room.status === 'online_booked') {
+                    statusHtml = `
+                        <span class="status-badge online">
+                            <i class="fas fa-globe"></i> Online Booked
+                        </span>
+                        <div class="action-buttons">
+                            <button class="btn-make-available" onclick="showMakeAvailableConfirm(${room.id})">
+                                <i class="fas fa-check-circle"></i> Make Available
+                            </button>
+                            <button class="btn-view" onclick="viewBooking(${room.id})">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+                        </div>
+                    `;
+                }
+
+                html += `
+                    <div class="room-card" data-id="${room.id}" data-status="${room.status}">
+                        <div class="room-checkbox">
+                            <input type="checkbox" class="room-select" value="${room.id}" onchange="updateBulkActions()">
+                        </div>
+                        <div class="room-number">
+                            <i class="fas fa-hashtag"></i>
+                            <h3>Room ${room.room_number}</h3>
+                        </div>
+                        <div class="room-details">
+                            <div class="detail-item">
+                                <i class="fas fa-bed"></i>
+                                <span>Type: <strong>${room.room_type}</strong></span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-tag"></i>
+                                <span>Price: <strong>₹${formatNumber(room.price)}</strong> / night</span>
+                            </div>
+                        </div>
+                        <div class="room-status">
+                            ${statusHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            document.getElementById('startCount').textContent = start + 1;
+            document.getElementById('endCount').textContent = Math.min(end, filteredRooms.length);
+            document.getElementById('totalCount').textContent = filteredRooms.length;
+            updatePaginationButtons();
+            clearSelection();
+        }
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        function updatePaginationButtons() {
+            const totalPages = Math.ceil(filteredRooms.length / rowsPerPage);
+            const pageNumbersDiv = document.getElementById('pageNumbers');
+            pageNumbersDiv.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = `page-number ${i === currentPage ? 'active' : ''}`;
+                btn.onclick = () => {
+                    currentPage = i;
+                    renderRooms();
+                };
+                pageNumbersDiv.appendChild(btn);
+            }
+
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderRooms();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredRooms.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderRooms();
+            }
+        }
+
+        // Make Available Functions
+        function showMakeAvailableConfirm(roomId) {
+            pendingAction = roomId;
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+            pendingAction = null;
+        }
+
+        function confirmMakeAvailable() {
+            if (pendingAction) {
+                makeAvailable(pendingAction);
+            }
+            closeConfirmModal();
+        }
+
+        function makeAvailable(roomId) {
+            fetch(`/make_room_available/${roomId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update local data
+                    const roomIndex = allRooms.findIndex(r => r.id === roomId);
+                    if (roomIndex !== -1) {
+                        allRooms[roomIndex].status = 'available';
+                    }
+                    applyFilters();
+                    showNotification('Room is now available for booking', 'success');
+                } else {
+                    showNotification(data.error || 'Failed to make room available', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('An error occurred', 'error');
+            });
+        }
+
+        // Bulk Actions
+        function toggleSelectAll() {
+            const checkboxes = document.querySelectorAll('.room-select');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            checkboxes.forEach(cb => cb.checked = !allChecked);
+            updateBulkActions();
+        }
+
+        function updateBulkActions() {
+            const selected = document.querySelectorAll('.room-select:checked');
+            const count = selected.length;
+            document.getElementById('selectedCount').textContent = count;
+            document.getElementById('bulkActions').style.display = count > 0 ? 'flex' : 'none';
+        }
+
+        function clearSelection() {
+            const checkboxes = document.querySelectorAll('.room-select');
+            checkboxes.forEach(cb => cb.checked = false);
+            updateBulkActions();
+        }
+
+        function bulkMakeAvailable() {
+            const selected = document.querySelectorAll('.room-select:checked');
+            const selectedIds = Array.from(selected).map(cb => parseInt(cb.value));
+            
+            if (selectedIds.length === 0) {
+                showNotification('Please select at least one room', 'warning');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to make ${selectedIds.length} room(s) available? This will remove any existing bookings.`)) {
+                fetch('/bulk_make_available', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ room_ids: selectedIds })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update local data
+                        selectedIds.forEach(id => {
+                            const roomIndex = allRooms.findIndex(r => r.id === id);
+                            if (roomIndex !== -1) {
+                                allRooms[roomIndex].status = 'available';
+                            }
+                        });
+                        applyFilters();
+                        showNotification(`${selectedIds.length} room(s) are now available`, 'success');
+                    } else {
+                        showNotification(data.error || 'Failed to update rooms', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('An error occurred', 'error');
+                });
+            }
+        }
+
+        function bulkDeleteRooms() {
+            const selected = document.querySelectorAll('.room-select:checked');
+            const selectedIds = Array.from(selected).map(cb => parseInt(cb.value));
+            
+            if (selectedIds.length === 0) {
+                showNotification('Please select at least one room', 'warning');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete ${selectedIds.length} room(s)? This action cannot be undone.`)) {
+                fetch('/bulk_delete_rooms', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ room_ids: selectedIds })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove deleted rooms from local data
+                        allRooms = allRooms.filter(r => !selectedIds.includes(r.id));
+                        applyFilters();
+                        showNotification(`${selectedIds.length} room(s) deleted successfully`, 'success');
+                    } else {
+                        showNotification(data.error || 'Failed to delete rooms', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('An error occurred', 'error');
+                });
+            }
+        }
+
+        // View Booking Details
+        function viewBooking(roomId) {
+            fetch(`/api/room-bookings/${roomId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const modalBody = document.getElementById('modalBody');
+                    if (data.booking) {
+                        modalBody.innerHTML = `
+                            <div class="booking-detail">
+                                <div class="detail-row"><strong>Guest Name:</strong> ${data.booking.name}</div>
+                                <div class="detail-row"><strong>Phone:</strong> ${data.booking.phone || 'N/A'}</div>
+                                <div class="detail-row"><strong>Email:</strong> ${data.booking.email || 'N/A'}</div>
+                                <div class="detail-row"><strong>Check-in:</strong> ${data.booking.date}</div>
+                                <div class="detail-row"><strong>Check-out:</strong> ${data.booking.checkout_date || 'N/A'}</div>
+                                <div class="detail-row"><strong>Guests:</strong> ${data.booking.guests}</div>
+                                <div class="detail-row"><strong>Amount Paid:</strong> ₹${formatNumber(data.booking.advance_paid || 0)}</div>
+                                <div class="detail-row"><strong>Payment Status:</strong> ${data.booking.payment_status}</div>
+                            </div>
+                        `;
+                    } else {
+                        modalBody.innerHTML = `<p>No booking details found for this room.</p>`;
+                    }
+                    document.getElementById('viewModal').style.display = 'flex';
+                })
+                .catch(error => {
+                    document.getElementById('modalBody').innerHTML = `<p>Error loading booking details.</p>`;
+                    document.getElementById('viewModal').style.display = 'flex';
+                });
+        }
+
+        function closeModal() {
+            document.getElementById('viewModal').style.display = 'none';
+        }
+
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function exportRooms() {
+            let csv = 'Room Number,Room Type,Price,Status\n';
+            filteredRooms.forEach(room => {
+                csv += `${room.room_number},${room.room_type},${room.price},${room.status}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'hotel_rooms.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Event Listeners
+        document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        document.getElementById('searchInput').addEventListener('keyup', applyFilters);
+        document.getElementById('confirmActionBtn').onclick = confirmMakeAvailable;
+        
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('viewModal');
+            const confirmModal = document.getElementById('confirmModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+            if (event.target === confirmModal) {
+                confirmModal.style.display = 'none';
+            }
+        }
+
+        // Initialize
+       document.addEventListener('DOMContentLoaded', function() {
+    applyFilters();   // only filter logic
+});
+    </script>
+</body>
+</html>
