@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, redirect, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date, timedelta
 import requests
 import os
+import secrets as secrets_lib
 from dotenv import load_dotenv
 
 load_dotenv()  # reads variables from a local .env file (not committed to git)
@@ -12,6 +14,19 @@ app = Flask(__name__)
 # -----------------------
 # CONFIG
 # -----------------------
+
+def require_env(key: str) -> str:
+    """Fail fast at startup if a required secret isn't set, instead of
+    silently falling back to a weak/guessable default."""
+    value = os.getenv(key)
+    if not value:
+        raise RuntimeError(
+            f"Missing required environment variable: {key}. "
+            f"Copy .env.example to .env and fill it in."
+        )
+    return value
+
+
 db_url = os.getenv("DATABASE_URL", "sqlite:///hotel.db")
 if db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql+psycopg://", 1)
@@ -20,13 +35,24 @@ elif db_url.startswith("postgresql://"):
 
 app.config["SQLALCHEMY_DATABASE_URI"] = db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.secret_key = os.getenv("SECRET_KEY", "dev-only-fallback-key")
 
-# Admin + Telegram settings pulled from environment variables
-ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "1234")
+# SECRET_KEY signs session cookies - must never have a predictable fallback.
+app.secret_key = require_env("SECRET_KEY")
+
+# Admin bootstrap credentials - only used the very first time the app runs,
+# to create the initial Admin row. After that, change the password from the
+# admin panel; these env vars are not read again for login checks.
+ADMIN_USERNAME = require_env("ADMIN_USERNAME")
+ADMIN_PASSWORD = require_env("ADMIN_PASSWORD")
+
+# Telegram notifications are optional - empty strings just disable the feature.
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
+
+# Debug mode must be explicitly opted into locally, never on by default.
+# Running debug=True in production exposes the Werkzeug interactive debugger,
+# which allows remote code execution.
+DEBUG_MODE = os.getenv("FLASK_DEBUG", "false").lower() == "true"
 
 db = SQLAlchemy(app)
 
@@ -51,13 +77,21 @@ class Booking(db.Model):
     utr = db.Column(db.String(100))
     hold_until = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    utr = db.Column(db.String(100), unique=True, nullable=True) 
+    utr = db.Column(db.String(100), unique=True, nullable=True)
 
 
 class Admin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50))
-    password = db.Column(db.String(100))
+    # Stores a salted hash (via werkzeug's generate_password_hash), never
+    # the raw password. Wide enough for scrypt/pbkdf2 hash strings.
+    password_hash = db.Column(db.String(255))
+
+    def set_password(self, raw_password: str):
+        self.password_hash = generate_password_hash(raw_password)
+
+    def check_password(self, raw_password: str) -> bool:
+        return check_password_hash(self.password_hash, raw_password)
 
 
 class Room(db.Model):
@@ -193,19 +227,19 @@ def get_all_booked_room_ids():
     bookings = Booking.query.filter(
         Booking.payment_status.in_(["Confirmed", "Pending", "Pending Verification"])
     ).all()
-    
+
     booked_room_ids = []
     for b in bookings:
         if b.room_id not in booked_room_ids:
             booked_room_ids.append(b.room_id)
-    
+
     # Also check Room table for offline booked rooms
     offline_booked_rooms = Room.query.filter_by(status="offline_booked").all()
     for room in offline_booked_rooms:
         room_data = get_room_by_number(room.room_number)
         if room_data and room_data["id"] not in booked_room_ids:
             booked_room_ids.append(room_data["id"])
-    
+
     return booked_room_ids
 
 
@@ -232,7 +266,7 @@ def home():
     today = date.today().isoformat()
     booked_rooms = get_booked_rooms(today)
     all_booked = get_all_booked_room_ids()
-    
+
     return render_template("index.html", rooms=rooms_data, booked_rooms=all_booked)
 
 
@@ -243,7 +277,7 @@ def rooms():
     selected_date = request.args.get("date", date.today().isoformat())
     booked_rooms = get_booked_rooms(selected_date)
     all_booked = get_all_booked_room_ids()
-    
+
     return render_template(
         "rooms.html",
         rooms=rooms_data,
@@ -364,7 +398,7 @@ def payment():
 
     try:
         remaining = int(total) - int(amount)
-    except:
+    except Exception:
         remaining = 0
 
     return render_template(
@@ -474,8 +508,10 @@ def admin_login():
     if request.method == "POST":
         username = request.form.get("username", "")
         password = request.form.get("password", "")
-        admin = Admin.query.filter_by(username=username, password=password).first()
-        if admin:
+        admin = Admin.query.filter_by(username=username).first()
+        # check_password compares against the stored hash - no plaintext
+        # password comparison happens anywhere in this app anymore.
+        if admin and admin.check_password(password):
             session["admin"] = True
             return redirect("/admin")
         else:
@@ -498,7 +534,7 @@ def change_password():
         new_password = request.form.get("password", "").strip()
         if new_password:
             admin = Admin.query.first()
-            admin.password = new_password
+            admin.set_password(new_password)
             db.session.commit()
             msg = "Password updated successfully!"
     return render_template("change_password.html", msg=msg)
@@ -606,12 +642,12 @@ def make_room_available(room_id):
         room = Room.query.filter_by(id=room_id).first()
         if room:
             room.status = "available"
-            
+
             # Cancel any confirmed booking for this room
             booking = Booking.query.filter_by(room_id=room_id, payment_status="Confirmed").first()
             if booking:
                 booking.payment_status = "Cancelled"
-            
+
             db.session.commit()
             return jsonify({"success": True})
         return jsonify({"error": "Room not found"}), 404
@@ -710,6 +746,11 @@ def delete(booking_id):
 
 @app.route("/check")
 def check():
+    # NOTE: this route has no admin check in the original app and leaks
+    # every booking's name/room/status to anyone who hits the URL.
+    # Locking it down since it's about to go on a public repo/server.
+    if not session.get("admin"):
+        return redirect("/admin-login")
     bookings = Booking.query.all()
     result = ""
     for b in bookings:
@@ -718,29 +759,38 @@ def check():
 
 
 # =======================
-# RUN
+# DB INITIALIZATION
+# -----------------------
+# Runs on import (so it works under gunicorn: `gunicorn app:app`) and also
+# when run directly with `python app.py`. Only the dev server start-up
+# stays behind the __main__ guard below.
+# =======================
+with app.app_context():
+    db.create_all()
+
+    if not Admin.query.first():
+        admin = Admin(username=ADMIN_USERNAME)
+        admin.set_password(ADMIN_PASSWORD)
+        db.session.add(admin)
+
+    if not Room.query.first():
+        rooms = [
+            Room(room_number="101", room_type="Family Non AC", price=599, status="available"),
+            Room(room_number="201", room_type="Standard Non AC", price=599, status="available"),
+            Room(room_number="202", room_type="Economy Non AC", price=599, status="available"),
+            Room(room_number="203", room_type="AC Deluxe", price=899, status="available"),
+            Room(room_number="301", room_type="AC Executive Suite", price=899, status="available"),
+            Room(room_number="302", room_type="AC Presidential Suite", price=899, status="available")
+        ]
+        db.session.add_all(rooms)
+
+    db.session.commit()
+    print("✅ Database initialized!")
+    print(f"📌 Admin Login: username='{ADMIN_USERNAME}', password from .env")
+
+
+# =======================
+# RUN (local dev server only - Render uses gunicorn instead)
 # =======================
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-
-        if not Admin.query.first():
-            admin = Admin(username=ADMIN_USERNAME, password=ADMIN_PASSWORD)
-            db.session.add(admin)
-
-        if not Room.query.first():
-            rooms = [
-                Room(room_number="101", room_type="Family Non AC", price=599, status="available"),
-                Room(room_number="201", room_type="Standard Non AC", price=599, status="available"),
-                Room(room_number="202", room_type="Economy Non AC", price=599, status="available"),
-                Room(room_number="203", room_type="AC Deluxe", price=899, status="available"),
-                Room(room_number="301", room_type="AC Executive Suite", price=899, status="available"),
-                Room(room_number="302", room_type="AC Presidential Suite", price=899, status="available")
-            ]
-            db.session.add_all(rooms)
-
-        db.session.commit()
-        print("✅ Database initialized!")
-        print(f"📌 Admin Login: username='{ADMIN_USERNAME}', password from .env")
-
-    app.run(debug=True)
+    app.run(debug=DEBUG_MODE)
